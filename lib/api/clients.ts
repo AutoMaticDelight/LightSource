@@ -62,3 +62,25 @@ export async function deleteClient(id: string) {
     throw error
   }
 }
+
+export async function getClientProductCounts(): Promise<{ [clientId: string]: number }> {
+  try {
+    const { data, error } = await supabase.from("client_products").select("client_id")
+
+    if (error) {
+      console.error("Error fetching client product counts:", error)
+      return {}
+    }
+
+    // Count products per client
+    const counts: { [clientId: string]: number } = {}
+    data?.forEach((item) => {
+      counts[item.client_id] = (counts[item.client_id] || 0) + 1
+    })
+
+    return counts
+  } catch (error) {
+    console.error("Error in getClientProductCounts:", error)
+    return {}
+  }
+}

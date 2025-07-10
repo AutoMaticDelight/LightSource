@@ -207,3 +207,27 @@ export async function bulkAssignProducts(productIds: string[], clientId: string)
     return false
   }
 }
+
+export async function updateProduct(id: string, updates: Partial<Product>): Promise<Product | null> {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error("Error updating product:", error)
+      return null
+    }
+
+    return data
+  } catch (error) {
+    console.error("Error in updateProduct:", error)
+    return null
+  }
+}
